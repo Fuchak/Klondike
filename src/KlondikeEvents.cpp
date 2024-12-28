@@ -71,32 +71,40 @@ void Klondike::selectGoal(unsigned int pos)
 
 void Klondike::handToPile(unsigned int x, unsigned int y)
 {
-    if (m_hand[m_hand_index].get_value() == m_pile[x][y].get_value() - 1 && m_hand[m_hand_index].get_color() != m_pile[x][y].get_color()) {
-        m_pile[x].push_back(m_hand[m_hand_index]);
-        m_hand.erase(m_hand.begin() + m_hand_index);
-        if (m_hand_index > 0)
-            m_hand_index--;
-    }
     if (y == 0 && m_pile[x].empty() && m_hand[m_hand_index].get_value() == 13) {
         m_pile[x].push_back(m_hand[m_hand_index]);
         m_hand.erase(m_hand.begin() + m_hand_index);
         if (m_hand_index > 0)
             m_hand_index--;
+        return;
+    }
+    if (m_pile[x].empty())  {
+        return;
+    }
+
+    if (m_hand[m_hand_index].get_value() == m_pile[x][y].get_value() - 1 && m_hand[m_hand_index].get_color() != m_pile[x][y].get_color()) {
+        m_pile[x].push_back(m_hand[m_hand_index]);
+        m_hand.erase(m_hand.begin() + m_hand_index);
+        if (m_hand_index > 0)
+            m_hand_index--;
+        return;
     }
 }
 
 void Klondike::PileToPile(unsigned int x, unsigned int y)
 {
-    if (!m_pile[x].empty() && m_pile[x].size() - 1 != y)
-        return;
-
-    if (m_ptr[0][m_selector].get_value() == m_pile[x][y].get_value() - 1 && m_ptr[0][m_selector].get_color() != m_pile[x][y].get_color()) {
+    if (y == 0 && m_pile[x].empty() && m_ptr[0][m_selector].get_value() == 13) {
         while (m_selector != m_ptr[0].size()) {
             m_pile[x].push_back(m_ptr[0][m_selector]);
             m_ptr[0].erase(m_ptr[0].begin() + m_selector);
         }
+        return;
     }
-    if (y == 0 && m_pile[x].empty() && m_ptr[0][m_selector].get_value() == 13) {
+    if (m_pile[x].empty()){
+        return;
+    }
+
+    if (m_ptr[0][m_selector].get_value() == m_pile[x][y].get_value() - 1 && m_ptr[0][m_selector].get_color() != m_pile[x][y].get_color()) {
         while (m_selector != m_ptr[0].size()) {
             m_pile[x].push_back(m_ptr[0][m_selector]);
             m_ptr[0].erase(m_ptr[0].begin() + m_selector);
@@ -123,8 +131,8 @@ void Klondike::action(unsigned int x, unsigned int y)
 
 bool Klondike::isCardValid(unsigned int x, size_t y)
 {
-    if (m_pile[x].size() <= y && m_ptr == nullptr)
-        return false;
+    if (m_pile[x].size() <= y)
+        return true;
     if (m_pile[x][y].get_status() == true)
         return true;
     return false;
